@@ -1,4 +1,4 @@
-using SurveyBasket.Api.Middlewares;
+
 using SurveyBasket.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,11 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
-// keyed service
-builder.Services.AddKeyedScoped<IOperatingSystem, MacOS>("MAC");
-builder.Services.AddKeyedScoped<IOperatingSystem, Linux>("LINUX");
-
+builder.Services.AddScoped<IPollService, PollService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline. (middlewares)
@@ -22,7 +18,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "V1"));
 }
 
-app.UseCustomMiddleware();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

@@ -1,7 +1,4 @@
-﻿
-using SurveyBasket.Api.Models;
-
-namespace SurveyBasket.Api.Services;
+﻿namespace SurveyBasket.Api.Services;
 
 public class PollService : IPollService
 {
@@ -24,8 +21,8 @@ public class PollService : IPollService
 
     public Poll? Get(int id)
     {
-        var poll = _polls.SingleOrDefault(pol => pol.Id == id);
-        return poll;
+        var _poll = _polls.SingleOrDefault(poll => poll.Id == id);
+        return _poll;
     }
 
     public Poll Add(Poll poll)

@@ -13,10 +13,11 @@ public class AuthController(IAuthService authService) : ControllerBase
         return authResult is null ? BadRequest("Invalid login attempt.") : Ok(authResult);
     }
 
-    [HttpPost("register")]
-    public async Task<IActionResult> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken)
+    [HttpPost("refresh")]
+    public async Task<IActionResult> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var authResult = await _authService.RegisterAsync(request, cancellationToken);
-        return authResult is null ? BadRequest("Registration failed.") : Ok(authResult);
+        var authResult = await _authService.GetRefreshTokenAsync(request.Token, request.RefreshToken, cancellationToken);
+        
+        return authResult is null ? BadRequest("Invalid token.") : Ok(authResult);
     }
 }

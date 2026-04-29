@@ -15,7 +15,7 @@ public class PollService(ApplicationDbContext context) : IPollService
 
     public async Task<Poll> AddAsync(Poll poll, CancellationToken cancellationToken = default)
     {
-        await _context.AddAsync(poll, cancellationToken);
+        await _context.Polls.AddAsync(poll, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         return poll;
     }

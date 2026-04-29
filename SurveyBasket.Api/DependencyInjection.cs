@@ -20,7 +20,7 @@ public static class DependencyInjection
 
         services.AddApplicationDbContext(_config);
 
-        services.AddAuthConfig();
+        services.AddAuthConfig(_config);
 
         services
             .AddSwggerServices()
@@ -66,12 +66,20 @@ public static class DependencyInjection
 
         return services;
     }
-    private static IServiceCollection AddAuthConfig(this IServiceCollection services)
+    private static IServiceCollection AddAuthConfig(this IServiceCollection services, IConfiguration _config)
     {
-        services.AddSingleton<IJwtProvider, JwtProvider>();
 
         services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        services.AddSingleton<IJwtProvider, JwtProvider>();
+        // services.Configure<JwtOptions>(_config.GetSection(JwtOptions.SectionName));
+        services.AddOptions<JwtOptions>()
+            .Bind(_config.GetSection(JwtOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        var jwtOptions = _config.GetSection(JwtOptions.SectionName).Get<JwtOptions>();
 
         services.AddAuthentication(options =>
         {
@@ -86,9 +94,9 @@ public static class DependencyInjection
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = "SurveyBasketApp",
-                    ValidAudience = "SurveyBasketApp Users",
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("095ea79a4c7e8c998b2c658b2fbeb99f39b2ad929f11d409a4f0"))
+                    ValidIssuer = jwtOptions?.Issuer,
+                    ValidAudience = jwtOptions?.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions?.Key!))
                 };
             });
         return services;

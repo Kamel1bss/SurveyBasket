@@ -20,6 +20,17 @@ public static class DependencyInjection
 
         services.AddApplicationDbContext(_config);
 
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(builder =>
+            {
+                builder
+                    .WithOrigins(_config.GetSection("AllowedOrigins").Get<string[]>()!) // Adjust the origin as needed
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+
         services.AddAuthConfig(_config);
 
         services
